@@ -18,7 +18,7 @@ def get_stiffness_curve_speed0(acceleration,rel_disp, rel_speed,tol=1e-4) :
     rel_disp0speed = rel_disp[idx_zero_speed]
     return acc0speed, rel_disp0speed
 
-def get_stiffness_curve_disp0(acceleration,rel_disp, rel_speed,tol=1e-4) :
+def get_damping_curve_disp0(acceleration,rel_disp, rel_speed,tol=1e-4) :
     idx_zero_disp = np.isclose(rel_disp, 0, atol=tol)
     acc0disp      = acceleration[idx_zero_disp]
     rel_speed0disp = rel_speed[idx_zero_disp]

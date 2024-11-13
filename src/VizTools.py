@@ -98,7 +98,7 @@ def VizASM(relative_displacement, relative_speed, acceleration, speed0_bool = Fa
         acc0speed, rel_disp0speed = CF.get_stiffness_curve_speed0(acceleration, relative_displacement, relative_speed)
         ax.scatter(0, rel_disp0speed, acc0speed, color='r')
     else :
-        acc0disp, rel_speed0disp = CF.get_stiffness_curve_disp0(acceleration, relative_displacement, relative_speed, tol=1e-5)
+        acc0disp, rel_speed0disp = CF.get_damping_curve_disp0(acceleration, relative_displacement, relative_speed, tol=1e-5)
         ax.scatter(rel_speed0disp, 0, acc0disp, color='r')
     if speed0_bool :
         plt.savefig("../figures/characteristique/ASM_disp3D.pdf", format='pdf', dpi=300, bbox_inches='tight')
