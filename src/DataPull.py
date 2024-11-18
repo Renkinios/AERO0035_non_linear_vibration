@@ -33,6 +33,7 @@ def extract_particular_data(data_set, start_freq, end_freq = 0) :
     force1 = data_set['pex'][0][idx]
     force2 = data_set['pex'][1][idx]
     rel_d  = x2 - x1
+    rel_v  = v2 - v1
     fext = np.array([force1, force2])
     q    = np.array([x1, x2])
     qd   = np.array([v1, v2])
@@ -41,4 +42,4 @@ def extract_particular_data(data_set, start_freq, end_freq = 0) :
     # q = np.concatenate((x1, x2))
     # qd = np.concatenate((v1, v2))
     # qdd = np.concatenate((a1, a2))
-    return fext, q, qd, qdd, rel_d
+    return {"fext": fext, "q": q, "qd": qd, "qdd": qdd, "rel_d": rel_d, "rel_v": rel_v}

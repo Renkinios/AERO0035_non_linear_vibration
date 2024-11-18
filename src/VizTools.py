@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import pandas as pd
-import characteristics_functions as CF
+import identification.characteristics_functions as CF
 
 # Définition globale des paramètres de police et de taille pour tous les graphiques
 plt.rc('font', family='serif')  # Police avec empattements, comme Times
@@ -35,8 +35,8 @@ def viz_displacement_LinearVSstudied(data_NI2D, data_exp):
     plt.legend()
     plt.xlim(start_freq, max(freq))
     plt.ylim(limMin_y, limMax_y)
-    plt.savefig("../figures/detection/LinearVSstudied.pdf", format='pdf', dpi=1200, bbox_inches='tight')
-    # plt.show()
+    # plt.savefig("../figures/identification/detection/LinearVSstudied.pdf", format='pdf', dpi=1200, bbox_inches='tight')
+    plt.show()
     plt.close()
 
 def viz_sinwesweepupVSsinwesweepdown(data_exp_up, data_exp_up_down):
@@ -64,7 +64,7 @@ def viz_sinwesweepupVSsinwesweepdown(data_exp_up, data_exp_up_down):
     plt.xlabel(r"Sweep frequency [Hz]")  
     plt.ylabel(r"Amplitude [m]")  
     plt.legend()
-    plt.savefig("../figures/detection/sinwesweepupVSsinwesweepdown.pdf", format='pdf', dpi=1200, bbox_inches='tight')
+    plt.savefig("../figures/identification/detection/sinwesweepupVSsinwesweepdown.pdf", format='pdf', dpi=1200, bbox_inches='tight')
     # plt.show()
     plt.close()
 
@@ -102,7 +102,7 @@ def viz_sinesweep40NVSsinesweep30N(data_exp_50N, data_exp_40N, data_exp_30N):
     plt.ylabel(r"Amplitude [m]")  
     plt.ylim(limMin_y, limMax_y)
     plt.legend()
-    plt.savefig("../figures/detection/sinesweep40NVSsinesweep30N.pdf", format='pdf', dpi=1200, bbox_inches='tight')
+    plt.savefig("../figures/identification/detection/sinesweep40NVSsinesweep30N.pdf", format='pdf', dpi=1200, bbox_inches='tight')
     # plt.show()
     plt.close()
 
@@ -116,7 +116,7 @@ def viz_displacement(data):
     plt.xlabel(r"Sweep frequency [Hz]")  
     plt.ylabel(r"Amplitude [m]")  
     plt.show()  
-    # plt.savefig("../figures/detection/displacement.pdf", format='pdf', dpi=1200, bbox_inches='tight')
+    # plt.savefig("../figures/identification/detection/displacement.pdf", format='pdf', dpi=1200, bbox_inches='tight')
     plt.close()
 
 
@@ -141,22 +141,59 @@ def VizASM(relative_displacement, relative_speed, acceleration) :
     ax.scatter(0, rel_disp0speed, acc0speed, color='#800020', s=taille_point, marker='x')
     acc0disp, rel_speed0disp = CF.get_damping_curve_disp0(acceleration, relative_displacement, relative_speed, tol=1e-5)
     ax.scatter(rel_speed0disp, 0, acc0disp, color='#006400', s=taille_point, marker='x')
-    plt.savefig("../figures/characteristique/ASM_3D.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    plt.savefig("../figures/identification/characteristique/ASM_3D.pdf", format='pdf', dpi=300, bbox_inches='tight')
     # plt.show()
     plt.close()
     plt.figure()
     plt.scatter(rel_disp0speed, acc0speed, color='#800020', s=taille_point, marker='x')
     plt.xlabel(r'Rel. displ [m]',fontdict={'fontsize': 20})
     plt.ylabel(r'-Acc.$[\mathrm{m}/\mathrm{s}^2]$', fontdict={'fontsize': 20})
-    plt.savefig("../figures/characteristique/ASM_stifness.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    plt.savefig("../figures/identification/characteristique/ASM_stifness.pdf", format='pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.figure()
     plt.scatter(rel_speed0disp, acc0disp, color ='#006400', s=taille_point,marker='x')
     plt.xlabel(r'Rel. vel [m/s]',fontdict={'fontsize': 20})
     plt.ylabel(r'-Acc.$[\mathrm{m}/\mathrm{s}^2]$',fontdict={'fontsize': 20})
-    # plt.savefig("../figures/characteristique/ASM_damping.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    # plt.savefig("../figures/identification/characteristique/ASM_damping.pdf", format='pdf', dpi=300, bbox_inches='tight')
     plt.show()
     plt.close()
 
-
+def viz_identification(measurement, prediction, data_RFS,tol=1e-3) :
+    measurement = measurement[1::2] # Selecting the second dof
+    prediction  = prediction[1::2] # Selecting the second dof
     
+    # Speed = 0 --> here take all point like considering that we don't have some damping
+    indices_d       = np.argsort(data_RFS['rel_d']) 
+    rel_disp_sorted = data_RFS['rel_d'][indices_d]  
+    f_nl_2          = prediction[indices_d]        
+
+    arg_0speed         = np.isclose(data_RFS['rel_v'], 0, atol=tol)
+    real_disp_0speed   = data_RFS['rel_d'][arg_0speed]
+    measurement_0speed = measurement[arg_0speed]
+
+    arg_sorted_disp    = np.argsort(real_disp_0speed)
+    real_disp_0speed   = real_disp_0speed[arg_sorted_disp]
+    measurement_0speed = measurement_0speed[arg_sorted_disp]
+
+    # like in relative speed = 0 no the g_nl = 0 for 0 displacement
+    f_nl_speed = np.zeros(len(data_RFS['rel_v']))
+    arg_0speed = np.isclose(data_RFS['rel_d'], 0, atol=1e-5)
+    real_speed_0disp = data_RFS['rel_v'][arg_0speed]
+    measurement_speed = measurement[arg_0speed]
+
+    plt.figure()
+    plt.scatter(real_speed_0disp, measurement_speed, s=20, marker='x',label=r'Measured')
+    plt.plot(data_RFS['rel_v'], f_nl_speed, label=r'Estimated', color='#800020')
+    plt.xlabel(r'Rel. vel [m/s]')
+    plt.ylabel(r'$f_{nl}(0, \dot{x_2} - \dot{x_1})$ [N]')
+    plt.legend()
+    plt.savefig("../figures/identification/estimation/Identification_speed.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+    plt.figure()
+    plt.plot(rel_disp_sorted, f_nl_2, label=r'Measured')
+    plt.plot(real_disp_0speed, measurement_0speed, label=r'Estimated', alpha=0.5)
+    plt.xlabel(r'Rel. disp [m]')
+    plt.ylabel(r'$f_{nl}(x_2 - x_1, 0)$ [N]')
+    plt.legend()
+    plt.savefig("../figures/identification/estimation/Identification_displacement.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    plt.close()

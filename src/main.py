@@ -3,8 +3,8 @@ import VibLinSpace as VLS
 import VizTools as VT
 import DataPull as DP
 import matplotlib.pyplot as plt
-import characteristics_functions as CF
-import identification_function as IF
+import identification.characteristics_functions as CF
+import identification.estimation_parameter as IF
 
 # matrice of the linear system at the begining 
 M = np.array([[1, 0], [0, 1]])
@@ -15,6 +15,8 @@ system = {'M': M, 'C': C, 'K': K}
 # freq, mode = VLS.get_mode_freq_lin(M, K)
 # First see the up and down about the sin sweep
 lab_linear_sin_sweep_40N_up             = DP.extract_data("../data/first_lab/group3_test1_1.mat")
+# V2ID_true     = DP.extract_data_NI2D("../data/first_lab/coorect_model.csv")
+
 # lab_linear_sin_sweep_40N_down           = DP.extract_data("../data/first_lab/group3_test1_2.mat")
 
 # # Second experimental see the differnce with the amplitude of the force
@@ -23,6 +25,7 @@ lab_linear_sin_sweep_40N_up             = DP.extract_data("../data/first_lab/gro
 
 # # For the comapraison with the experimental data
 # V2ID_data_linear_sin_sweep_up_40N       = DP.extract_data_NI2D("../data/first_lab/model_project_Displacement_sin_sweep40.csv")
+# VT.viz_displacement_LinearVSstudied(V2ID_true, lab_linear_sin_sweep_40N_up)
 
 # VT.viz_displacement_LinearVSstudied(V2ID_data_linear_sin_sweep_up_40N, lab_linear_sin_sweep_40N_up)
 # VT.viz_sinwesweepupVSsinwesweepdown(lab_linear_sin_sweep_40N_up, lab_linear_sin_sweep_40N_down)
@@ -31,5 +34,5 @@ lab_linear_sin_sweep_40N_up             = DP.extract_data("../data/first_lab/gro
 # relative_displacement, relative_speed, neg_acceleration= CF.get_ASM(lab_linear_sin_sweep_40N_up)
 # VT.VizASM(relative_displacement, relative_speed, neg_acceleration)
 
-alpha =  IF.get_RFS(lab_linear_sin_sweep_40N_up, system)
-print(alpha)
+alpha, right_term, estimate_fext, data_RFS =  IF.get_RFS(lab_linear_sin_sweep_40N_up, system)
+VT.viz_identification(right_term, estimate_fext, data_RFS)
