@@ -28,4 +28,4 @@ def get_RFS(data_exp, system) :
 
     print("Significance factor : \t",significance_factor)
 
-    return alpha, right_term, estimate_fext, data_RFS
+    return alpha, degree_pol, right_term, estimate_fext, data_RFS
