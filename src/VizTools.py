@@ -39,15 +39,15 @@ def viz_displacement_LinearVSstudied(data_NI2D, data_exp):
     plt.show()
     plt.close()
 
-def viz_sinwesweepupVSsinwesweepdown(data_exp_up, data_exp_up_down):
-    start_freq_up      = data_exp_up["ext_force"][0][2][0]      # Hz
-    sweep_rate_freq_up = (data_exp_up["ext_force"][0][4][0])/60 # s
-    freq_up            = start_freq_up + sweep_rate_freq_up * data_exp_up['t'][0]
-    displacement_2_up  = data_exp_up['x'][1]
-    start_freq_up_down      = data_exp_up_down["ext_force"][0][2][0]      # Hz
-    sweep_rate_freq_up_down = (data_exp_up_down["ext_force"][0][4][0])/60 # s
-    freq_up_down            = start_freq_up_down + sweep_rate_freq_up_down * data_exp_up_down['t'][0]
-    displacement_2_up_down  = data_exp_up_down['x'][1]
+def viz_sinwesweepupVSsinwesweepdown(data_exp_up, data_exp_down):
+    start_freq_up        = data_exp_up["ext_force"][0][2][0]      # Hz
+    sweep_rate_freq_up   = (data_exp_up["ext_force"][0][4][0])/60 # s
+    freq_up              = start_freq_up + sweep_rate_freq_up * data_exp_up['t'][0]
+    displacement_2_up    = data_exp_up['x'][1]
+    start_freq_down      = data_exp_down["ext_force"][0][2][0]      # Hz
+    sweep_rate_freq_down = (data_exp_down["ext_force"][0][4][0])/60 # s
+    freq_down            = start_freq_down + sweep_rate_freq_down * data_exp_down['t'][0]
+    displacement_2_up_down  = data_exp_down['x'][1]
     limMin_y = np.min(displacement_2_up) - 0.02
     limMax_y = np.max(displacement_2_up) + 0.02
     plt.figure(figsize=(10, 4))
@@ -56,7 +56,7 @@ def viz_sinwesweepupVSsinwesweepdown(data_exp_up, data_exp_up_down):
     plt.hlines(-0.0240, start_freq_up, max(freq_up), colors='black', linestyles='dashdot')
     plt.hlines(0.0286, start_freq_up, max(freq_up), colors='black', linestyles='dashdot')
     plt.plot(freq_up, displacement_2_up, label=r"Sine sweep up excitation")
-    plt.plot(freq_up_down, displacement_2_up_down, label=r"Sine sweep down excitation")
+    plt.plot(freq_down, displacement_2_up_down, label=r"Sine sweep down excitation")
     plt.xlim(start_freq_up, max(freq_up))
     plt.ylim(limMin_y, limMax_y)
     plt.xticks([5, 10, 15, 20, 25, 29, 30.88])
@@ -197,3 +197,71 @@ def viz_identification(measurement, prediction, data_RFS,tol=1e-3) :
     plt.legend()
     plt.savefig("../figures/identification/estimation/Identification_displacement.pdf", format='pdf', dpi=300, bbox_inches='tight')
     plt.close()
+
+def viz_NLFR(dic_NLFR10, dic_NLFR30, dict_NLFR50, backboneBOOL = False, freq = [], backbone = []) :
+    plt.figure(figsize=(10, 4))
+    if dic_NLFR10['bifurcation']:
+        plt.plot(dic_NLFR10['omega_without_bif'] / 2 / np.pi, dic_NLFR10['mat_absVal_without_bif'][1], color='#1f77b4')  # Bleu foncé
+        plt.plot(dic_NLFR10['omega_bif'] / 2 / np.pi, dic_NLFR10['mat_absVal_bif'][1], color='#1f77b4', label=r"$|F| = 10$ N")
+    else:
+        plt.plot(dic_NLFR10['omega_without_bif'] / 2 / np.pi, dic_NLFR10['mat_absVal_without_bif'][1], color='#1f77b4', label=r"$|F| = 10$ N")
+
+    if dic_NLFR30['bifurcation']:
+        plt.plot(dic_NLFR30['omega_without_bif'] / 2 / np.pi, dic_NLFR30['mat_absVal_without_bif'][1], color='#8b0000')  # Rouge bordeaux
+        plt.plot(dic_NLFR30['omega_bif'] / 2 / np.pi, dic_NLFR30['mat_absVal_bif'][1], color='#8b0000', label=r"$|F| = 30$ N")
+    else:
+        plt.plot(dic_NLFR30['omega_without_bif'] / 2 / np.pi, dic_NLFR30['mat_absVal_without_bif'][1], color='#8b0000', label=r"$|F| = 30$ N")
+
+    if dict_NLFR50['bifurcation']:
+        plt.plot(dict_NLFR50['omega_without_bif'] / 2 / np.pi, dict_NLFR50['mat_absVal_without_bif'][1], color='#228b22')  # Vert forêt
+        plt.plot(dict_NLFR50['omega_bif'] / 2 / np.pi, dict_NLFR50['mat_absVal_bif'][1], color='#228b22', label=r"$|F| = 50$ N")
+    else:
+        plt.plot(dict_NLFR50['omega_without_bif'] / 2 / np.pi, dict_NLFR50['mat_absVal_without_bif'][1], color='#228b22', label=r"$|F| = 50$ N")
+    if backboneBOOL:
+        plt.plot(freq, backbone[1], color='#000000', label=r"Backbone curve")
+    plt.xlabel(r"Frequency [Hz]")
+    plt.ylabel(r"Amplitude [m]")
+    plt.legend()
+    if backboneBOOL:
+        plt.xlim(25,33)
+        plt.savefig("../figures/simulation/NLFR_with_backbone.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    else:
+        plt.xlim(np.min(dict_NLFR50['omega_without_bif'] / 2 / np.pi), np.max(dic_NLFR10['omega_bif'] / 2 / np.pi))
+        plt.savefig("../figures/simulation/NLFR.pdf", format='pdf', dpi=300, bbox_inches='tight')
+
+def viz_confirm_NLFR_up_down(data_exp_up, data_exp_down,dict_NLFR):
+    start_freq_up        = data_exp_up["ext_force"][0][2][0]      # Hz
+    sweep_rate_freq_up   = (data_exp_up["ext_force"][0][4][0])/60 # s
+    freq_up              = start_freq_up + sweep_rate_freq_up * data_exp_up['t'][0]
+    displacement_2_up    = data_exp_up['x'][1]
+    start_freq_down      = data_exp_down["ext_force"][0][2][0]      # Hz
+    sweep_rate_freq_down = (data_exp_down["ext_force"][0][4][0])/60 # s
+    freq_down            = start_freq_down + sweep_rate_freq_down * data_exp_down['t'][0]
+    displacement_2_up_down  = data_exp_down['x'][1]
+    limMin_y = np.min(displacement_2_up) - 0.02
+    limMax_y = np.max(displacement_2_up) + 0.02
+    plt.figure(figsize=(10, 4))
+    plt.plot(freq_up, displacement_2_up, label=r"Sine sweep up excitation")
+    plt.plot(freq_down, displacement_2_up_down, label=r"Sine sweep down excitation")
+    if dict_NLFR['bifurcation']:
+        plt.plot(dict_NLFR['omega_without_bif'] / 2 / np.pi, dict_NLFR['mat_absVal_without_bif'][1], color='#8b0000')
+        plt.plot(dict_NLFR['omega_bif'] / 2 / np.pi, dict_NLFR['mat_absVal_bif'][1], color='#8b0000', label=r"NLFRs")
+    else:
+        plt.plot(dict_NLFR['omega_without_bif'] / 2 / np.pi, dict_NLFR['mat_absVal_without_bif'][1], color='#8b0000', label=r"NLFRs")
+    plt.xlim(start_freq_up, max(freq_up))
+    plt.ylim(limMin_y, limMax_y)
+    plt.xlabel(r"Sweep frequency [Hz]")  
+    plt.ylabel(r"Amplitude [m]")  
+    plt.legend()
+    plt.savefig("../figures/simulation/confirm_NLFR_up_down.pdf", format='pdf', dpi=300, bbox_inches='tight')
+
+def viz_backbonecurve(backbone,freq):
+    plt.figure()
+    plt.plot(freq, backbone[1])
+    plt.xlabel(r"Frequency [Hz]")
+    plt.ylabel(r"Amplitude [m]")
+    plt.savefig("../figures/simulation/backbone_curve.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    plt.xlim(np.min(freq), np.max(freq))
+    plt.close()
+    
+
