@@ -25,10 +25,31 @@ This project requires the installation of the packages listed in the `requiremen
 pip install -r requirements.txt
 ```
 ## Usage
+This script allows running simulations and identifications. You can execute all tasks by default or specify which task to run using command-line arguments. To run by default the project the user can run the following command:
+
+```bash
+python src/main.py
+```
+Is important to note that the user need to be in the folder where the `main.py` file is located. The code will generate the figures and the results of the project. The figures will be saved in the `figures` folder. The user can also change the parameters of the system in the `main.py` file.
+
+If the user just one two run the identification part of the project, the user can run the following command:
+
+```bash
+python src/main.py --identification
+```
+if he only wants to run the simulation part of the project, the user can run the following command:
+
+```bash
+python src/main.py --simulation
+```
+If the user need to have some help concerning the runing it can run the following command:
+
+```bash
+python src/main.py -h
+```
 
 
-## Project structure
-### Project Structure
+## Project Structure
 
 - **`data/`**: Contains the data used in the project.  
 - **`figures/`**: Stores the figures related to the project. Subfolders `identification` and `simulation` contain figures corresponding to their respective sections.  

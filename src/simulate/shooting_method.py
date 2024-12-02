@@ -6,14 +6,16 @@ def equation_shooting(y_0, sys, t_end, omega) :
     q_sol = ODE_shot(y_0, sys, t_end, omega)
     q_end = q_sol.y[:,-1]
     h = q_sol.y[:, -1] - q_sol.y[:, 0]
+    # print("h",np.abs(h))
     return h
 
 def shooting_method(sys, T, omega, y_guess) :
     t_end = T # calculate for eeach periode
     nDof = len(sys['M'])
     equation_shooting_omega = lambda y_0 : equation_shooting(y_0, sys, t_end, omega)
-    options = {'xtol': 1e-10, 'maxfev': 30000} # look to diminish it 
+    options = {'xtol': 5e-5, 'maxfev': 30000} # look to diminish it 
     y_sol, _, ier, _ = fsolve(equation_shooting_omega, y_guess, full_output=True, **options) #solve the shooting quation
+
     x_0_sol = y_sol[:nDof]
     xdot_0_sol = y_sol[nDof:]
     return x_0_sol, xdot_0_sol, ier
