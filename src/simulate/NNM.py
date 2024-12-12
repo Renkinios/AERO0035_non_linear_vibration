@@ -4,8 +4,7 @@ from tqdm import tqdm
 
 
 def get_NNN(system, omega, y_firstguess):
-    # This code is based on one mode that have some linearity is for that that we considere 
-    # just one bifurcatoin possible
+    
     nDof  = len(system['M'])
     def f_ext(t, omega):
         return np.zeros(nDof)
@@ -18,7 +17,7 @@ def get_NNN(system, omega, y_firstguess):
 
     for i in tqdm(range(len(omega)), desc="Progression NNMs", unit="freq"):
         T = (2 * np.pi) / omega[i]
-        x_0_sol, xdot_0_sol, ier = SM.shooting_method(system, T, omega[i], y_guess)
+        x_0_sol, xdot_0_sol, ier = SM.compute_shooting_method(system, T, omega[i], y_guess)
         if ier != 1:
             bifurcation = True
             if i == 0:

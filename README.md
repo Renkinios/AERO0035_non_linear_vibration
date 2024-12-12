@@ -1,6 +1,6 @@
 # AERO0035: Nonlinear Vibration of Aerospace Structures
 
-## Measure, Identify, Simulate, and Understand the Nonlinear Vibration of a 2-Degree-of-Freedom System
+## Identifying and Simulating Nonlinearities in a 2-DoF Mechanical System
 ### Academic Year 2024 – 2025
 
 #### Authors:
@@ -25,24 +25,25 @@ This project requires the installation of the packages listed in the `requiremen
 pip install -r requirements.txt
 ```
 ## Usage
-This script allows running simulations and identifications. You can execute all tasks by default or specify which task to run using command-line arguments. To run by default the project the user can run the following command:
+This script enables simulations and identifications. By default, all tasks can be executed, or specific tasks can be selected using command-line arguments. It is **important** to note that the data is too large to include here and must be added manually. To run the project with default settings, use the following command:
 
 ```bash
 python src/main.py
 ```
-Is important to note that the user need to be in the folder where the `main.py` file is located. The code will generate the figures and the results of the project. The figures will be saved in the `figures` folder. The user can also change the parameters of the system in the `main.py` file.
+The code will generate the figures and the results of the project. The figures will be saved in the `figures` folder. The user can also change the parameters of the system in the `main.py` file.
 
-If the user just one two run the identification part of the project, the user can run the following command:
+To run specific parts of the project, the following commands can be used:
+- Identification :
 
 ```bash
 python src/main.py --identification
 ```
-if he only wants to run the simulation part of the project, the user can run the following command:
+- Simulation :
 
 ```bash
 python src/main.py --simulation
 ```
-If the user need to have some help concerning the runing it can run the following command:
+For help on the command-line arguments, use the following command:
 
 ```bash
 python src/main.py -h
@@ -51,8 +52,10 @@ python src/main.py -h
 
 ## Project Structure
 
-- **`data/`**: Contains the data used in the project.  
+- **`data/`**: Contains the data used in the project, which must be imported manually. Each test is categorized into different folders: `first_lab`, `second_lab`, `third_lab`, and `fourth_lab`.
+
 - **`figures/`**: Stores the figures related to the project. Subfolders `identification` and `simulation` contain figures corresponding to their respective sections.  
+
 - **`src/`**: Includes the project's source code, organized into two main parts: `identification` and `simulation`. Several key files are present:
   - **`VizTool.py`**: Used for generating all graphical representations.  
   - **`DataPull.py`**: Handles data extraction.  

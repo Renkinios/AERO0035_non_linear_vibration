@@ -8,13 +8,14 @@ def get_NFLR(system, omega, y_firstguess):
     mat_absVal_without_bif = np.zeros((nDof, len(omega)))
     mat_absVal_bif         = np.zeros((nDof, len(omega)))
     omega_without_bif      = omega
-    omega_bif              = omega[::-1]  # Inversion des fréquences pour le calcul avec bifurcation
+    # Inversion of the matrix for bifurcation
+    omega_bif              = omega[::-1]  
     bifurcation            = False
     y_guess                = y_firstguess
 
     for i in tqdm(range(len(omega)), desc="Progression (without bifurcation)", unit="freq"):
         T = (2 * np.pi) / omega[i]
-        x_0_sol, xdot_0_sol, ier = SM.shooting_method(system, T, omega[i], y_guess)
+        x_0_sol, xdot_0_sol, ier = SM.compute_shooting_method(system, T, omega[i], y_guess)
         if ier != 1:
             bifurcation = True
             if i == 0:
@@ -34,7 +35,7 @@ def get_NFLR(system, omega, y_firstguess):
         y_guess = y_firstguess
         for i in tqdm(range(len(omega_bif)), desc="Progression (with bifurcation)   ", unit="freq"):
             T = (2 * np.pi) / omega_bif[i]
-            x_0_sol, xdot_0_sol, ier = SM.shooting_method(system, T, omega_bif[i], y_guess)
+            x_0_sol, xdot_0_sol, ier = SM.compute_shooting_method(system, T, omega_bif[i], y_guess)
             if ier != 1:
                 if i == 0:
                     mat_absVal_bif = mat_absVal_bif[:, :i]

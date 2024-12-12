@@ -13,8 +13,8 @@ def get_RFS(data_exp, system) :
         f.append(np.column_stack((-data_RFS['rel_d']**i,data_RFS['rel_d']**i)).flatten(order='C'))
     f = np.array(f).T
 
+
     alpha, _, _, _ =  np.linalg.lstsq(f,right_term, rcond=None)
-    print("Alpha : \t",alpha)
     estimate_fext = f @ alpha
     sigma = np.var(right_term)
     sigma_tot = np.var(estimate_fext)

@@ -12,12 +12,13 @@ from   simulate.NNM import get_NNN
 
 
 
-# matrice of the linear system at the begining 
 M = np.array([[1, 0], [0, 1]])
 C = np.array([[3, -1], [-1, 3]])
 K = 10**4 * np.array([[2, -1], [-1, 2]])
 system = {'M': M, 'C': C, 'K': K}
+
 def run_identification():
+    
     print("Running identification")
     # First see the up and down about the sin sweep
     lab_linear_sin_sweep_40N_up             = DP.extract_data("../data/first_lab/group3_test1_1.mat")
@@ -44,9 +45,12 @@ def run_identification():
     # characteristique method ASM
     relative_displacement, relative_speed, neg_acceleration= CF.get_ASM(lab_linear_sin_sweep_40N_up)
     VT.VizASM(relative_displacement, relative_speed, neg_acceleration)
-
-    # Estimation of the parameter by RFS method
     alpha, degree_pole, right_term, estimate_fext, data_RFS =  IF.get_RFS(lab_linear_sin_sweep_40N_up, system)
+    
+    row1 = " + ".join(f"{c:.2e} * (q_2 - q_1)**{d}" for c, d in zip(alpha, degree_pole))
+    row2 = " + ".join(f"{-c:.2e} * (q_2 - q_1)**{d}" for c, d in zip(alpha, degree_pole))
+    
+    print(f"F_nl = \n[{row1},\n {row2}]")
     VT.viz_identification(right_term, estimate_fext, data_RFS)
 
 
@@ -66,7 +70,7 @@ def run_simulation():
     system['f_ext'] = f_ext_50
     freq = np.linspace(10, 35, 700)
     omega = 2*np.pi*freq
-    y_guess = np.array([0.002, -0.001, 0.002, -0.001])
+    y_guess = np.array([3, -1, 2, -1]) *1e-4
     print("\nShooting method for force amplitude of F = 50N")
     dic_NLFR50 = get_NFLR(system, omega, y_guess)
 
@@ -83,35 +87,26 @@ def run_simulation():
     
     VT.viz_NLFR(dic_NLFR50, dic_NLFR30, dic_NLFR10)
 
-
-    # Validation of the NLFRs with the sin up and down 
-    def f_ext_40(t, omega):
-        return np.array([40*np.sin(omega*t), 0])
-    system['f_ext'] = f_ext_40
-    freq = np.linspace(10, 35, 800)
-    omega = 2*np.pi*freq
-    y_guess = np.array([0.002, -0.001, 0.002, -0.001])
-    dic_NLFR40 = get_NFLR(system, omega, y_guess)
-    lab_linear_sin_sweep_40N_up             = DP.extract_data("../data/first_lab/group3_test1_1.mat")
-    lab_linear_sin_sweep_40N_down           = DP.extract_data("../data/first_lab/group3_test1_2.mat")
-    VT.viz_confirm_NLFR_up_down(lab_linear_sin_sweep_40N_up, lab_linear_sin_sweep_40N_down, dic_NLFR40)
-
-    # NNN modal, backbone curve
-    freq    = np.linspace(27.58, 33, 800)
-    omega   = 2*np.pi*freq
-    y_guess = np.array([0.009, -0.009, 0, 0]) *1e-1
-    mat_absVal_without_bif, omega_without_bif = get_NNN(system, omega, y_guess)
-    # backbone_NI2D = DP.extract_data_NI2D("../data/NI2D/backbone_curve.csv")
-    VT.viz_backbonecurve(mat_absVal_without_bif, omega_without_bif/2/np.pi)
-    # VT.viz_NLFR(dic_NLFR10, dic_NLFR30, dic_NLFR50, backboneBOOL= True, backbone=mat_absVal_without_bif, freq= omega_without_bif/2/np.pi)
-
-
     # Validation of the NLFRs wiith 
     NLFRs_50_NI2D = DP.extract_data_NI2D("../data/NI2D/NLFRs_50.csv")
     NLFRs_30_NI2D = DP.extract_data_NI2D("../data/NI2D/NLFRs_30.csv")
     NLFRs_10_NI2D = DP.extract_data_NI2D("../data/NI2D/NLFRs_10.csv")
     VT.viz_NLFR_confirm_NI2D(dic_NLFR10, dic_NLFR30, dic_NLFR50, NLFRs_50_NI2D, NLFRs_30_NI2D, NLFRs_10_NI2D)
 
+
+    lab_linear_sin_sweep_50N_up             = DP.extract_data("../data/fourth_lab/group3_test4_1.mat")
+    lab_linear_sin_sweep_50N_down           = DP.extract_data("../data/fourth_lab/group3_test4_2.mat")
+    VT.viz_confirm_NLFR_up_down(lab_linear_sin_sweep_50N_up, lab_linear_sin_sweep_50N_down, dic_NLFR50)
+
+    # NNN modal, backbone curve
+    freq    = np.linspace(27.58, 33, 700)
+    omega   = 2*np.pi*freq
+    y_guess = np.array([0.009, -0.009, 0, 0]) *1e-1
+    mat_absVal_without_bif, omega_without_bif = get_NNN(system, omega, y_guess)
+
+    backbone_NI2D = DP.extract_data_NI2D("../data/NI2D/backbones_curve.csv")
+    VT.viz_backbonecurve(mat_absVal_without_bif, omega_without_bif/2/np.pi, backbone_NI2D)
+    VT.viz_NLFR(dic_NLFR10, dic_NLFR30, dic_NLFR50, backboneBOOL= True, backbone=mat_absVal_without_bif, freq= omega_without_bif/2/np.pi)
 
 def main():
     parser = argparse.ArgumentParser(description="Manage simulations and identifications.")

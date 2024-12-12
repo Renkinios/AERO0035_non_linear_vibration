@@ -21,18 +21,18 @@ def viz_displacement_LinearVSstudied(data_NI2D, data_exp):
     limMin_y = np.min(displacement_2) - 0.02
     limMax_y = np.max(displacement_2) + 0.02
     plt.figure(figsize=(10, 4))
-    plt.vlines(28.1, limMin_y, limMax_y, colors='black', linestyles='dashdot')
+    plt.vlines(27.57, limMin_y, limMax_y, colors='black', linestyles='dashdot')
     plt.vlines(30.85, limMin_y, limMax_y, colors='black', linestyles='dashdot')
     plt.hlines(-0.0240, start_freq, max(freq), colors='black', linestyles='dashdot')
     plt.hlines(0.0286, start_freq, max(freq), colors='black', linestyles='dashdot')
     plt.plot(freq, displacement_2, label=r"Studied structure")
     plt.plot(data_NI2D["Frequency (Hz)"], data_NI2D["Amplitude (m)"], label=r"Linear structure")
-    plt.xticks([5, 10, 15, 20, 25, 28.1, 30.85])
+    plt.xticks([5, 10, 15, 20, 25, 27.57, 30.85])
     plt.yticks([-0.1,-0.05, -0.0240, 0, 0.0286, 0.05, 0.1])
 
     plt.xlabel(r"Sweep frequency [Hz]")  
     plt.ylabel(r"Amplitude [m]")  
-    plt.legend()
+    plt.legend(loc="upper right")
     plt.xlim(start_freq, max(freq))
     plt.ylim(limMin_y, limMax_y)
     plt.savefig("../figures/identification/detection/LinearVSstudied.pdf", format='pdf', dpi=1200, bbox_inches='tight')
@@ -47,7 +47,7 @@ def viz_true_sin(data_exp, data_NI2D, name_fig):
     plt.plot(data_NI2D["Frequency (Hz)"], data_NI2D["Amplitude (m)"], label=r"Simulations",linestyle='dashdot')
     plt.xlabel(r"Times [s]")  
     plt.ylabel(r"Amplitude [m]")  
-    plt.legend()
+    plt.legend(loc="upper right")
     plt.xlim(0, 1)
     plt.ylim(limMin_y, limMax_y)
     plt.savefig("../figures/identification/"+name_fig+".pdf", format='pdf', dpi=1200, bbox_inches='tight')
@@ -90,7 +90,7 @@ def viz_sinwesweepupVSsinwesweepdown(data_exp_up, data_exp_down):
     plt.yticks([-0.1,-0.05, -0.0240, 0, 0.0286, 0.05, 0.1])
     plt.xlabel(r"Sweep frequency [Hz]")  
     plt.ylabel(r"Amplitude [m]")  
-    plt.legend()
+    plt.legend(loc="upper right")
     plt.savefig("../figures/identification/detection/sinwesweepupVSsinwesweepdown.pdf", format='pdf', dpi=1200, bbox_inches='tight')
     # plt.show()
     plt.close()
@@ -128,7 +128,7 @@ def viz_sinesweep40NVSsinesweep30N(data_exp_50N, data_exp_40N, data_exp_30N):
     plt.xlabel(r"Sweep frequency [Hz]")  
     plt.ylabel(r"Amplitude [m]")  
     plt.ylim(limMin_y, limMax_y)
-    plt.legend()
+    plt.legend(loc="upper right")
     plt.savefig("../figures/identification/detection/sinesweep40NVSsinesweep30N.pdf", format='pdf', dpi=1200, bbox_inches='tight')
     # plt.show()
     plt.close()
@@ -147,29 +147,35 @@ def viz_displacement(data):
     plt.close()
 
 
-def VizASM(relative_displacement, relative_speed, acceleration) : 
+def VizASM(relative_displacement, relative_speed, acceleration):
     taille_point = 20
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.plot3D(relative_speed, relative_displacement, acceleration)
+    
+    ax.plot3D(relative_speed, relative_displacement, acceleration, color='royalblue')
+    
     ax.set_xlabel(r'Rel. vel [m]')
     ax.set_ylabel(r'Rel. disp [m/s]')
     ax.set_zlabel(r'-Acc.$[\mathrm{m}/\mathrm{s}^2]$')
-    ax.yaxis.labelpad=10
-    ax.grid(False) 
-    # ax.xaxis.pane.fill = False
-    # ax.yaxis.pane.fill = False
-    # ax.zaxis.pane.fill = False
-    ax.xaxis.pane.set_edgecolor('w')
-    ax.yaxis.pane.set_edgecolor('w')
-    ax.zaxis.pane.set_edgecolor('w')
-    ax.set_box_aspect([1,2,1])
+    
+    ax.yaxis.labelpad = 10
+    
+    ax.grid(False)
+    
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+    fig.patch.set_facecolor('white')
+    ax.set_box_aspect([1, 1, 1])
+    
     acc0speed, rel_disp0speed = CF.get_stiffness_curve_speed0(acceleration, relative_displacement, relative_speed)
     ax.scatter(0, rel_disp0speed, acc0speed, color='#800020', s=taille_point, marker='x')
+    
     acc0disp, rel_speed0disp = CF.get_damping_curve_disp0(acceleration, relative_displacement, relative_speed, tol=1e-5)
     ax.scatter(rel_speed0disp, 0, acc0disp, color='#006400', s=taille_point, marker='x')
-    plt.savefig("../figures/identification/characteristique/ASM_3D.pdf", format='pdf', dpi=300, bbox_inches='tight')
-    # plt.show()
+    
+    # plt.savefig("../figures/identification/characteristique/ASM_3D.pdf", format='pdf', dpi=300, bbox_inches='tight')
+    plt.show()
     plt.close()
     plt.figure()
     plt.scatter(rel_disp0speed, acc0speed, color='#800020', s=taille_point, marker='x')
@@ -181,15 +187,13 @@ def VizASM(relative_displacement, relative_speed, acceleration) :
     plt.scatter(rel_speed0disp, acc0disp, color ='#006400', s=taille_point,marker='x')
     plt.xlabel(r'Rel. vel [m/s]',fontdict={'fontsize': 20})
     plt.ylabel(r'-Acc.$[\mathrm{m}/\mathrm{s}^2]$',fontdict={'fontsize': 20})
-    # plt.savefig("../figures/identification/characteristique/ASM_damping.pdf", format='pdf', dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.savefig("../figures/identification/characteristique/ASM_damping.pdf", format='pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
 def viz_identification(measurement, prediction, data_RFS,tol=1e-3) :
     measurement = measurement[1::2] # Selecting the second dof
     prediction  = prediction[1::2] # Selecting the second dof
     
-    # Speed = 0 --> here take all point like considering that we don't have some damping
     indices_d       = np.argsort(data_RFS['rel_d']) 
     rel_disp_sorted = data_RFS['rel_d'][indices_d]  
     f_nl_2          = prediction[indices_d]        
@@ -213,7 +217,7 @@ def viz_identification(measurement, prediction, data_RFS,tol=1e-3) :
     plt.plot(data_RFS['rel_v'], f_nl_speed, label=r'Estimated', color='#800020')
     plt.xlabel(r'Rel. vel [m/s]')
     plt.ylabel(r'$f_{nl}(0, \dot{x_2} - \dot{x_1})$ [N]')
-    plt.legend()
+    plt.legend(loc ='lower right')
     plt.savefig("../figures/identification/estimation/Identification_speed.pdf", format='pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.figure()
@@ -221,7 +225,7 @@ def viz_identification(measurement, prediction, data_RFS,tol=1e-3) :
     plt.plot(real_disp_0speed, measurement_0speed, label=r'Estimated', alpha=0.5)
     plt.xlabel(r'Rel. disp [m]')
     plt.ylabel(r'$f_{nl}(x_2 - x_1, 0)$ [N]')
-    plt.legend()
+    plt.legend(loc ='lower right')
     plt.savefig("../figures/identification/estimation/Identification_displacement.pdf", format='pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
@@ -231,19 +235,19 @@ def viz_NLFR(dic_NLFR10, dic_NLFR30, dict_NLFR50, backboneBOOL = False, freq = [
     else:
         plt.figure(figsize=(10, 4))
     if dic_NLFR10['bifurcation']:
-        plt.plot(dic_NLFR10['omega_without_bif'] / 2 / np.pi, dic_NLFR10['mat_absVal_without_bif'][1], color='#1f77b4')  # Bleu foncé
+        plt.plot(dic_NLFR10['omega_without_bif'] / 2 / np.pi, dic_NLFR10['mat_absVal_without_bif'][1], color='#1f77b4')  
         plt.plot(dic_NLFR10['omega_bif'] / 2 / np.pi, dic_NLFR10['mat_absVal_bif'][1], color='#1f77b4', label=r"$|F| = 10$ N")
     else:
         plt.plot(dic_NLFR10['omega_without_bif'] / 2 / np.pi, dic_NLFR10['mat_absVal_without_bif'][1], color='#1f77b4', label=r"$|F| = 10$ N")
 
     if dic_NLFR30['bifurcation']:
-        plt.plot(dic_NLFR30['omega_without_bif'] / 2 / np.pi, dic_NLFR30['mat_absVal_without_bif'][1], color='#8b0000')  # Rouge bordeaux
+        plt.plot(dic_NLFR30['omega_without_bif'] / 2 / np.pi, dic_NLFR30['mat_absVal_without_bif'][1], color='#8b0000')
         plt.plot(dic_NLFR30['omega_bif'] / 2 / np.pi, dic_NLFR30['mat_absVal_bif'][1], color='#8b0000', label=r"$|F| = 30$ N")
     else:
         plt.plot(dic_NLFR30['omega_without_bif'] / 2 / np.pi, dic_NLFR30['mat_absVal_without_bif'][1], color='#8b0000', label=r"$|F| = 30$ N")
 
     if dict_NLFR50['bifurcation']:
-        plt.plot(dict_NLFR50['omega_without_bif'] / 2 / np.pi, dict_NLFR50['mat_absVal_without_bif'][1], color='#228b22')  # Vert forêt
+        plt.plot(dict_NLFR50['omega_without_bif'] / 2 / np.pi, dict_NLFR50['mat_absVal_without_bif'][1], color='#228b22')
         plt.plot(dict_NLFR50['omega_bif'] / 2 / np.pi, dict_NLFR50['mat_absVal_bif'][1], color='#228b22', label=r"$|F| = 50$ N")
     else:
         plt.plot(dict_NLFR50['omega_without_bif'] / 2 / np.pi, dict_NLFR50['mat_absVal_without_bif'][1], color='#228b22', label=r"$|F| = 50$ N")
@@ -286,15 +290,15 @@ def viz_confirm_NLFR_up_down(data_exp_up, data_exp_down,dict_NLFR):
     plt.legend()
     plt.savefig("../figures/simulation/confirm_NLFR_up_down.pdf", format='pdf', dpi=300, bbox_inches='tight')
 
-def viz_backbonecurve(backbone, freq):
-    plt.figure()
-    plt.plot(freq/2/np.pi, backbone[1], label=r"Backbone curve", linewidth=2)
-    plt.vlines(27.5664,0, 0.04, colors='black', linestyles='dashdot', label=r'Linear resonance frequency')
-    # plt.plot(backbone_NI2D["Frequency (Hz)"], backbone_NI2D["Amplitude (m)"], label=r"NI2D Backbone curve", alpha=0.7, linewidth=1)
+def viz_backbonecurve(backbone, freq, backbone_NI2D):
+    plt.figure(figsize=(8,7))
+    plt.plot(freq, backbone[1], label=r"Backbone curve", linewidth=2)
+    plt.plot(backbone_NI2D["Frequency (Hz)"], backbone_NI2D["Amplitude (m)"], label=r"Backbone curve NI2D", linewidth=1, linestyle='dashdot')
+    plt.vlines(27.5664,0, 0.06, colors='black', linestyles='dashdot', label=r'Linear resonance frequency')
     plt.xlabel(r"Frequency [Hz]")
     plt.ylabel(r"Amplitude [m]")
     plt.xlim(27.2,31)
-    plt.ylim(0,0.03)
+    plt.ylim(0,0.06)
     plt.legend()
     plt.savefig("../figures/simulation/backbone_curve.pdf", format='pdf', dpi=300, bbox_inches='tight')
     plt.close()
@@ -332,7 +336,7 @@ def viz_NLFR_confirm_NI2D(dic_NLFR10, dic_NLFR30, dict_NLFR50, NLFRs_NI2D_50, NL
                  color='#228b22', linewidth=2, label=r"$|F| = 50$ N")
 
     plt.plot(NLFRs_NI2D_50["Frequency (Hz)"], NLFRs_NI2D_50["Amplitude (m)"], 
-             color='black', alpha=0.7, linewidth=1.25)  # Traits moyens pour les courbes de référence
+             color='black', alpha=0.7, linewidth=1.25)
     plt.plot(NLFRs_NI2D_30["Frequency (Hz)"], NLFRs_NI2D_30["Amplitude (m)"], 
              color='black', alpha=0.7, linewidth=1.25)
     plt.plot(NLFRs_NI2D_10["Frequency (Hz)"], NLFRs_NI2D_10["Amplitude (m)"], 
