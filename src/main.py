@@ -85,7 +85,7 @@ def run_simulation():
     print("\nShooting method for force amplitude of F = 10N")
     dic_NLFR10 = get_NFLR(system, omega, y_guess)
     
-    VT.viz_NLFR(dic_NLFR50, dic_NLFR30, dic_NLFR10)
+    VT.viz_NLFR(dic_NLFR10, dic_NLFR30, dic_NLFR50, backboneBOOL= False)
 
     # Validation of the NLFRs wiith 
     NLFRs_50_NI2D = DP.extract_data_NI2D("../data/NI2D/NLFRs_50.csv")

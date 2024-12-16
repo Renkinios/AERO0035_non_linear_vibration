@@ -16,6 +16,8 @@
 
 ## Introduction
 The purpose of this project is to identify and simulate the nonlinear vibrations of a 2-degree-of-freedom system. The identification process involves three key steps: detection, characterization, and parameter estimation. The simulation is conducted using Nonlinear Frequency Responses (NLFRs) and Nonlinear Normal Modes (NNMs). Comprehensive details are provided in the accompanying report.
+The overleaf link to the report is [here](https://www.overleaf.com/read/vpkzxfvyhgvq#7ad03e).
+The link for the slides is [here](https://www.overleaf.com/read/tctrtqygsxnv#d2b162).
 
 
 ## Requirements

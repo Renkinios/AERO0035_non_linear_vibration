@@ -154,8 +154,8 @@ def VizASM(relative_displacement, relative_speed, acceleration):
     
     ax.plot3D(relative_speed, relative_displacement, acceleration, color='royalblue')
     
-    ax.set_xlabel(r'Rel. vel [m]')
-    ax.set_ylabel(r'Rel. disp [m/s]')
+    ax.set_xlabel(r'Rel. vel [m/s]')
+    ax.set_ylabel(r'Rel. disp [m]')
     ax.set_zlabel(r'-Acc.$[\mathrm{m}/\mathrm{s}^2]$')
     
     ax.yaxis.labelpad = 10
@@ -261,7 +261,7 @@ def viz_NLFR(dic_NLFR10, dic_NLFR30, dict_NLFR50, backboneBOOL = False, freq = [
         plt.ylim(0,0.034)
         plt.savefig("../figures/simulation/NLFR_with_backbone.pdf", format='pdf', dpi=300, bbox_inches='tight')
     else:
-        plt.xlim(np.min(dict_NLFR50['omega_without_bif'] / 2 / np.pi), np.max(dic_NLFR10['omega_bif'] / 2 / np.pi))
+        plt.xlim(10, 35)
         plt.savefig("../figures/simulation/NLFR.pdf", format='pdf', dpi=300, bbox_inches='tight')
 
 def viz_confirm_NLFR_up_down(data_exp_up, data_exp_down,dict_NLFR):
